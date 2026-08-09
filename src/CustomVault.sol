@@ -4,6 +4,9 @@ pragma solidity ^0.8.27;
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 
 contract CustomVault is Ownable {
+    // Errors
+    error CustomVault__ValueCantBeZero();
+    error CustomVault__InsufficientVaultBalance();
 
     // Events with parameters for better tracking
     event FundsDeposited(address indexed sender, uint256 amount);
@@ -17,14 +20,20 @@ contract CustomVault is Ownable {
 
     // Function to deposit funds into the vault
     function deposit() public payable {
-        require(msg.value > 0, "Cannot deposit 0 ETH");
+        // require(msg.value > 0, "Cannot deposit 0 ETH");
+        if(msg.value == 0){
+            revert CustomVault__ValueCantBeZero();
+        }
         funds[msg.sender] += msg.value;
         emit FundsDeposited(msg.sender, msg.value);
     }
 
     // Function to withdraw funds, strictly restricted to the owner (Timelock)
     function withdraw(address payable to, uint256 amount) public onlyOwner {
-        require(address(this).balance >= amount, "Insufficient vault balance");
+        // require(address(this).balance >= amount, "Insufficient vault balance");
+        if(address(this).balance < amount) {
+            revert CustomVault__InsufficientVaultBalance();
+        }
         
         // Transfer the funds securely
         (bool success, ) = to.call{value: amount}("");

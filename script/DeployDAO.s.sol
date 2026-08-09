@@ -27,7 +27,7 @@ contract DeployDAO is Script {
         MyGovernor governor = new MyGovernor(token, timeLock);
 
         // 5. Deploy CustomVault with TimeLock set as the owner
-        CustomVault vault = new CustomVault(address(timeLock));
+        // CustomVault vault = new CustomVault(address(timeLock));
 
         // 6. Setup Timelock Roles for decentralization
         bytes32 proposerRole = timeLock.PROPOSER_ROLE();
